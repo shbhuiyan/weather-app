@@ -7,7 +7,7 @@ const Home = () => {
     const [location , setLocation] = useState("")
     const [loading , setLoading] = useState(false)
     const [error , setError] = useState("")
-console.log(data);
+    const [history , setHistory] = useState([])
 
     const apiKey = "c9a72e554d8b43b5d43da2c9f7bafd5c"
 
@@ -23,6 +23,13 @@ console.log(data);
         .then(res => {
             setData(res.data)
             localStorage.setItem('lastCity', cityName);
+
+            // Update search history in localStorage
+            const prevHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            const newHistory = [cityName, ...prevHistory.filter(city => city !== cityName)].slice(0, 5);
+            localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+            setHistory(newHistory);
+
             setLoading(false)
         })
         .catch(()=> {
@@ -42,9 +49,13 @@ console.log(data);
 
     useEffect(() => {
         const savedCity = localStorage.getItem('lastCity');
+        const savedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
         if (savedCity) {
           fetchWeather(savedCity);
         }
+
+        setHistory(savedHistory);
       }, []);
 
  
@@ -98,6 +109,26 @@ console.log(data);
                     loading && (
                         <div className="flex justify-center mt-6">
                             <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-white border-opacity-50"></div>
+                        </div>
+                    )
+                }
+
+            {/* Show Last 5 Search City's History */}
+                {
+                    history.length > 0 && (
+                        <div className="mt-6 backdrop-blur p-4 rounded-xl shadow-md">
+                          <h3 className="text-lg font-semibold mb-2 text-white">📍 Recent Search History:</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {history.map((city, i) => (
+                              <button
+                                key={i}
+                                className="bg-white/70 text-black px-4 py-2 rounded-full hover:bg-white transition"
+                                onClick={() => fetchWeather(city)}
+                              >
+                                {city}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                     )
                 }
