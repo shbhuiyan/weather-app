@@ -5,7 +5,7 @@ import axios from "axios";
 const Home = () => {
     const [data , setData] = useState({})
     const [location , setLocation] = useState("")
-console.log(data);
+    const [loading , setLoading] = useState(false)
 
     const apiKey = "c9a72e554d8b43b5d43da2c9f7bafd5c"
 
@@ -14,9 +14,13 @@ console.log(data);
         if(!cityName){
             return
         }
+        setLoading(true)
 
         axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`)
-        .then(res => setData(res.data))
+        .then(res => {
+            setData(res.data)
+            setLoading(false)
+        })
     };
 
     //After Enter Keyup then call this fn
@@ -39,6 +43,15 @@ console.log(data);
                     onKeyUp={searchLocation}
                     />
                 </div>
+
+            {/* Loading State */}
+                {
+                    loading && (
+                        <div className="flex justify-center mt-6">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-white border-opacity-50"></div>
+                        </div>
+                    )
+                }
             </div>
         </section>
     );
