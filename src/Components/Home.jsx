@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../Styles/background.css"
 import axios from "axios";
 
@@ -22,6 +22,7 @@ console.log(data);
         axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`)
         .then(res => {
             setData(res.data)
+            localStorage.setItem('lastCity', cityName);
             setLoading(false)
         })
         .catch(()=> {
@@ -39,10 +40,19 @@ console.log(data);
         }
     };
 
+    useEffect(() => {
+        const savedCity = localStorage.getItem('lastCity');
+        if (savedCity) {
+          fetchWeather(savedCity);
+        }
+      }, []);
+
  
     return (
         <section className="background">
             <div className="max-w-[600px] mx-auto px-3 pt-20 lg:pt-36">
+
+                <h1 className="text-center text-4xl mb-10 text-yellow-400">Check Your City's Weather</h1>
 
             {/* Search Box */}
                 <div className=" border rounded-2xl shadow-xl backdrop-blur p-8">
