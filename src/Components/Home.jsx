@@ -6,6 +6,8 @@ const Home = () => {
     const [data , setData] = useState({})
     const [location , setLocation] = useState("")
     const [loading , setLoading] = useState(false)
+    const [error , setError] = useState("")
+console.log(data);
 
     const apiKey = "c9a72e554d8b43b5d43da2c9f7bafd5c"
 
@@ -15,10 +17,16 @@ const Home = () => {
             return
         }
         setLoading(true)
+        setError("")
 
         axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`)
         .then(res => {
             setData(res.data)
+            setLoading(false)
+        })
+        .catch(()=> {
+            setError("⚠️ City not found. Please try again.")
+            setData({})
             setLoading(false)
         })
     };
@@ -30,10 +38,13 @@ const Home = () => {
             setLocation("")
         }
     };
+
  
     return (
         <section className="background">
             <div className="max-w-[600px] mx-auto px-3 pt-20 lg:pt-36">
+
+            {/* Search Box */}
                 <div className=" border rounded-2xl shadow-xl backdrop-blur p-8">
                     <input type="text"
                     placeholder="Enter City Name"
@@ -42,7 +53,35 @@ const Home = () => {
                     onChange={e => setLocation(e.target.value)}
                     onKeyUp={searchLocation}
                     />
+
+                {/* weather information box */}
+                    {
+                        !loading && data.main && (
+                            <div className="m-10">
+                                <h2 className="text-3xl text-center font-bold mb-2">{data.name}, {data.sys.country}</h2>
+                                <div className="flex items-center justify-between mt-14">
+                                    <img
+                                      src={`/icons/${data.weather[0].icon}.png`}
+                                      alt={data.weather[0].description}
+                                      className="w-32 h-32 drop-shadow-md"
+                                    />
+                                    <div className="">
+                                    <p className='text-xl mb-1'>🌡 Temperature: {(data.main.temp - 273.15).toFixed(1)}°C</p>
+                                    <p className='text-lg capitalize mb-1'>☁ Condition: {data.weather[0].description}</p>
+                                    <p className='text-md'>💨 Wind Speed: {data.wind.speed} m/s</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
+
+            {/* Error Handling */}
+                {
+                    error && (
+                    <div className="text-red-300 text-2xl font-bold text-center mt-4">{error}</div>
+                    )
+                }
 
             {/* Loading State */}
                 {
@@ -52,6 +91,7 @@ const Home = () => {
                         </div>
                     )
                 }
+
             </div>
         </section>
     );
