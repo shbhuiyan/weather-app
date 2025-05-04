@@ -1,6 +1,6 @@
 # 🌦️ Weather App
 
-A responsive and lightweight React-based weather application that allows users to search for the current weather in any city. Built with **React 19**, **Tailwind CSS**, **Axios**, and **OpenWeatherMap API**.
+A responsive and lightweight React-based weather application that allows users to search for the current weather in any city. Built with **React**, **Tailwind CSS**, **Axios**, and **OpenWeatherMap API**.
 
 ---
 
